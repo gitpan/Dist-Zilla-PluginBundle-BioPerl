@@ -1,0 +1,183 @@
+---
+abstract: 'Build your distributions like Bioperl does'
+author:
+  - 'BioPerl Team <bioperl-l@lists.open-bio.org>'
+build_requires:
+  File::Find: 0
+  File::Temp: 0
+  Test::More: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.31
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.200003, CPAN::Meta::Converter version 2.110930'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Dist-Zilla-PluginBundle-Bioperl
+requires:
+  Dist::Zilla::Plugin::Authority: 0
+  Dist::Zilla::Plugin::AutoPrereqs: 0
+  Dist::Zilla::Plugin::CompileTests: 0
+  Dist::Zilla::Plugin::EOLTests: 0.02
+  Dist::Zilla::Plugin::Git::Tag: 0
+  Dist::Zilla::Plugin::MetaConfig: 0
+  Dist::Zilla::Plugin::MetaJSON: 0
+  Dist::Zilla::Plugin::MetaResources: 3
+  Dist::Zilla::Plugin::NextRelease: 0
+  Dist::Zilla::Plugin::NoTabsTests: 0
+  Dist::Zilla::Plugin::PodWeaver: 0
+  Dist::Zilla::Plugin::TaskWeaver: 0
+  Dist::Zilla::PluginBundle::Classic: 0
+  Dist::Zilla::PluginBundle::Filter: 0
+  Dist::Zilla::Role::PluginBundle::Easy: 0
+  Method::Signatures::Simple: 0
+  Moose: 1.00
+  Moose::Util::TypeConstraints: 0
+  MooseX::Types::Email: 0
+  MooseX::Types::Moose: 0
+  MooseX::Types::Structured: 0.20
+  MooseX::Types::URI: 0
+  Pod::Weaver::PluginBundle::FLORA: 0.03
+  namespace::autoclean: 0
+resources:
+  bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Dist-Zilla-PluginBundle-Bioperl
+  homepage: http://search.cpan.org/dist/Dist-Zilla-PluginBundle-Bioperl
+  repository: git://github.com/rafl/dist-zilla-pluginbundle-bioperl.git
+version: 0.01
+x_Dist_Zilla:
+  plugins:
+    -
+      class: Dist::Zilla::Plugin::GatherDir
+      name: '@FLORA/@Basic/GatherDir'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::PruneCruft
+      name: '@FLORA/@Basic/PruneCruft'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::ManifestSkip
+      name: '@FLORA/@Basic/ManifestSkip'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::MetaYAML
+      name: '@FLORA/@Basic/MetaYAML'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::License
+      name: '@FLORA/@Basic/License'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::Readme
+      name: '@FLORA/@Basic/Readme'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::ExtraTests
+      name: '@FLORA/@Basic/ExtraTests'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::ExecDir
+      name: '@FLORA/@Basic/ExecDir'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::ShareDir
+      name: '@FLORA/@Basic/ShareDir'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::MakeMaker
+      name: '@FLORA/@Basic/MakeMaker'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::Manifest
+      name: '@FLORA/@Basic/Manifest'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::TestRelease
+      name: '@FLORA/@Basic/TestRelease'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::ConfirmRelease
+      name: '@FLORA/@Basic/ConfirmRelease'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::UploadToCPAN
+      name: '@FLORA/@Basic/UploadToCPAN'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::MetaConfig
+      name: '@FLORA/MetaConfig'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::MetaJSON
+      name: '@FLORA/MetaJSON'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::PkgVersion
+      name: '@FLORA/PkgVersion'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::PodSyntaxTests
+      name: '@FLORA/PodSyntaxTests'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::NoTabsTests
+      name: '@FLORA/NoTabsTests'
+      version: 0.01
+    -
+      class: Dist::Zilla::Plugin::PodCoverageTests
+      name: '@FLORA/PodCoverageTests'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::MetaResources
+      name: '@FLORA/MetaResources'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::Authority
+      name: '@FLORA/Authority'
+      version: 1.003
+    -
+      class: Dist::Zilla::Plugin::EOLTests
+      name: '@FLORA/EOLTests'
+      version: 0.02
+    -
+      class: Dist::Zilla::Plugin::PodWeaver
+      name: '@FLORA/PodWeaver'
+      version: 3.101641
+    -
+      class: Dist::Zilla::Plugin::AutoPrereqs
+      name: '@FLORA/AutoPrereqs'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::Prereqs
+      config:
+        Dist::Zilla::Plugin::Prereqs:
+          phase: runtime
+          type: requires
+      name: Prereqs
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::CompileTests
+      name: CompileTests
+      version: 1.110930
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':InstallModules'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':TestFiles'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':ExecFiles'
+      version: 4.200003
+    -
+      class: Dist::Zilla::Plugin::FinderCode
+      name: ':ShareFiles'
+      version: 4.200003
+  zilla:
+    class: Dist::Zilla::Dist::Builder
+    config:
+      is_trial: 0
+    version: 4.200003
+x_authority: cpan:FLORA
