@@ -1,10 +1,11 @@
-package Dist::Zilla::PluginBundle::Bioperl;
+package Dist::Zilla::PluginBundle::BioPerl;
 BEGIN {
-  $Dist::Zilla::PluginBundle::Bioperl::AUTHORITY = 'cpan:FLORA';
+  $Dist::Zilla::PluginBundle::BioPerl::AUTHORITY = 'cpan:CJFIELDS';
 }
-BEGIN {
-  $Dist::Zilla::PluginBundle::Bioperl::VERSION = '0.01';
+{
+  $Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.01';
 }
+
 # ABSTRACT: Build your distributions like Bioperl does
 
 use Moose 1.00;
@@ -16,6 +17,52 @@ use MooseX::Types::Moose qw(Bool Str CodeRef);
 use MooseX::Types::Structured 0.20 qw(Map Dict Optional);
 use namespace::autoclean -also => 'lower';
 
+=head1 SYNOPSIS
+
+In dist.ini:
+
+  [@Bioperl]
+  dist = Distribution-Name
+  repository_at = github
+
+=head1 DESCRIPTION
+
+This is the L<Dist::Zilla> configuration I use to build my
+distributions.
+
+It is roughly equivalent to:
+
+  [@Filter]
+  bundle = @Basic
+
+  [MetaConfig]
+  [MetaJSON]
+  [PkgVersion]
+  [PodSyntaxTests]
+  [PodCoverageTests]
+  [NoTabsTests]
+  [EOLTests]
+  [NextRelease]
+  [Git::Tag]
+
+  [MetaResources]
+  repository.type   = git
+  repository.url    = git://github.com/rafl/${lowercase_dist}
+  repository.web    = http://github.com/rafl/${lowercase_dist}
+  bugtracker.web    = http://rt.cpan.org/Public/Dist/Display.html?Name=${dist}
+  bugtracker.mailto = bug-${dist}@rt.cpan.org
+  homepage          = http://search.cpan.org/dist/${dist}
+
+  [Authority]
+  authority   = cpan:CJFIELDS
+  do_metadata = 1
+
+  #[PodWeaver]
+  #config_plugin = @FLORA
+
+  [AutoPrereqs]
+
+=cut
 
 has dist => (
     is       => 'ro',
@@ -295,7 +342,7 @@ method configure {
         NoTabsTests
         NextRelease
         Git::Tag
-        CompileTests
+        Test::Compile
     ));
 
     $self->add_plugins('PodCoverageTests')
@@ -339,75 +386,3 @@ with 'Dist::Zilla::Role::PluginBundle::Easy';
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
-=pod
-
-=encoding utf-8
-
-=head1 NAME
-
-Dist::Zilla::PluginBundle::Bioperl - Build your distributions like Bioperl does
-
-=head1 SYNOPSIS
-
-In dist.ini:
-
-  [@Bioperl]
-  dist = Distribution-Name
-  repository_at = github
-
-=head1 DESCRIPTION
-
-This is the L<Dist::Zilla> configuration I use to build my
-distributions.
-
-It is roughly equivalent to:
-
-  [@Filter]
-  bundle = @Basic
-
-  [MetaConfig]
-  [MetaJSON]
-  [PkgVersion]
-  [PodSyntaxTests]
-  [PodCoverageTests]
-  [NoTabsTests]
-  [EOLTests]
-  [NextRelease]
-  [Git::Tag]
-
-  [MetaResources]
-  repository.type   = git
-  repository.url    = git://github.com/rafl/${lowercase_dist}
-  repository.web    = http://github.com/rafl/${lowercase_dist}
-  bugtracker.web    = http://rt.cpan.org/Public/Dist/Display.html?Name=${dist}
-  bugtracker.mailto = bug-${dist}@rt.cpan.org
-  homepage          = http://search.cpan.org/dist/${dist}
-
-  [Authority]
-  authority   = cpan:CJFIELDS
-  do_metadata = 1
-
-  #[PodWeaver]
-  #config_plugin = @FLORA
-
-  [AutoPrereqs]
-
-=head1 DERIVATION
-
-This is a fork of Florian Ragwitz's excellent L<Dist::Zilla::PluginBundle::FLORA>.
-
-=head1 AUTHOR
-
-BioPerl Team <bioperl-l@lists.open-bio.org>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2011 by BioPerl Team.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
-
