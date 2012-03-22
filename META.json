@@ -67,11 +67,11 @@
       "homepage" : "http://search.cpan.org/dist/Dist-Zilla-PluginBundle-BioPerl",
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com/rafl/dist-zilla-pluginbundle-bioperl.git",
-         "web" : "http://github.com/rafl/dist-zilla-pluginbundle-bioperl"
+         "url" : "git://github.com/bioperl/dist-zilla-pluginbundle-bioperl.git",
+         "web" : "http://github.com/bioperl/dist-zilla-pluginbundle-bioperl"
       }
    },
-   "version" : "0.01",
+   "version" : "0.02",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
@@ -180,8 +180,8 @@
             "version" : "1.120370"
          },
          {
-            "class" : "Dist::Zilla::Plugin::CompileTests",
-            "name" : "@BioPerl/CompileTests",
+            "class" : "Dist::Zilla::Plugin::Test::Compile",
+            "name" : "@BioPerl/Test::Compile",
             "version" : "1.112820"
          },
          {
