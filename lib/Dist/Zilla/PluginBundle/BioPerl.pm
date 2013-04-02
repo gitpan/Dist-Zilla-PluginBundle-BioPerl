@@ -1,338 +1,98 @@
 package Dist::Zilla::PluginBundle::BioPerl;
 BEGIN {
-  $Dist::Zilla::PluginBundle::BioPerl::AUTHORITY = 'cpan:CJFIELDS';
+  $Dist::Zilla::PluginBundle::BioPerl::AUTHORITY = 'cpan:BIOPERLML';
 }
 {
-  $Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.02';
+  $Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.20';
 }
+use utf8;
 
 # ABSTRACT: Build your distributions like Bioperl does
+# AUTHOR:   Florian Ragwitz <rafl@debian.org>
+# AUTHOR:   Sheena Scroggins
+# AUTHOR:   Carnë Draug <carandraug+dev@gmail.com
+# OWNER:    2010 Florian Ragwitz
+# OWNER:    2011 Sheena Scroggins
+# OWNER:    2013 Carnë Draug
+# LICENSE:  Perl_5
 
 use Moose 1.00;
-use Method::Signatures::Simple;
-use Moose::Util::TypeConstraints;
+use MooseX::AttributeShortcuts;
 use MooseX::Types::URI qw(Uri);
 use MooseX::Types::Email qw(EmailAddress);
-use MooseX::Types::Moose qw(Bool Str CodeRef);
-use MooseX::Types::Structured 0.20 qw(Map Dict Optional);
-use namespace::autoclean -also => 'lower';
+use MooseX::Types::Moose qw(ArrayRef Bool Str);
+use namespace::autoclean;
+with 'Dist::Zilla::Role::PluginBundle::Easy';
 
-=head1 SYNOPSIS
 
-In dist.ini:
 
-  [@BioPerl]
-  dist = Distribution-Name
-  repository_at = github
+sub get_value {
+    my ($self, $accessor) = @_;
+    my %defaults = (
+        'homepage'            => 'http://search.cpan.org/dist/%{dist}',
+        'repository.github'   => 'user:bioperl',
+        'bugtracker.web'      => 'https://redmine.open-bio.org/projects/bioperl/',
+        'bugtracker.mailto'   => 'bioperl-l@bioperl.org',
+        'authority'           => 'cpan:BIOPERLML',
+        'trailing_whitespace' => 1,
+        'allow_dirty'         => ['Changes', 'dist.ini'],
+    );
+    return $self->payload->{$accessor} || $defaults{$accessor};
+}
 
-=head1 DESCRIPTION
+has homepage => (
+    is      => 'lazy',
+    isa     => Str,
+    default => sub { shift->get_value('homepage') }
+);
 
-This is the L<Dist::Zilla> configuration for the BioPerl project.
+has repository_github => (
+    is      => 'lazy',
+    isa     => Str,
+    default => sub { shift->get_value('repository.github') }
+);
 
-It is roughly equivalent to:
+has bugtracker_web => (
+    is      => 'lazy',
+    isa     => Uri,
+    coerce  => 1,
+    default => sub { shift->get_value('bugtracker.web') }
+);
 
-  [@Filter]
-  bundle = @Basic
-
-  [MetaConfig]
-  [MetaJSON]
-  [PkgVersion]
-  [PodSyntaxTests]
-  [PodCoverageTests]
-  [NoTabsTests]
-  [EOLTests]
-  [NextRelease]
-  [Git::Tag]
-
-  [MetaResources]
-  repository.type   = git
-  repository.url    = git://github.com/bioperl/${lowercase_dist}
-  repository.web    = http://github.com/bioperl/${lowercase_dist}
-  bugtracker.web    = http://rt.cpan.org/Public/Dist/Display.html?Name=${dist}
-  bugtracker.mailto = bug-${dist}@rt.cpan.org
-  homepage          = http://search.cpan.org/dist/${dist}
-
-  [Authority]
-  authority   = cpan:CJFIELDS
-  do_metadata = 1
-
-  # NOT ENABLED YET!
-  #[PodWeaver]
-  #config_plugin = @FLORA
-
-  [AutoPrereqs]
-
-=cut
-
-has dist => (
-    is       => 'ro',
-    isa      => Str,
-    required => 1,
+has bugtracker_mailto => (
+    is      => 'lazy',
+    isa     => EmailAddress,
+    default => sub { shift->get_value('bugtracker.mailto') }
 );
 
 has authority => (
-    is      => 'ro',
+    is      => 'lazy',
     isa     => Str,
-    default => 'cpan:CJFIELDS',
+    default => sub { shift->get_value('authority') }
 );
 
-# backcompat
-has auto_prereq => (
-    is      => 'ro',
+has trailing_whitespace => (
+    is      => 'lazy',
     isa     => Bool,
-    default => 1,
+    default => sub { shift->get_value('trailing_whitespace') }
 );
 
-has auto_prereqs => (
-    is      => 'ro',
-    isa     => Bool,
-    lazy    => 1,
-    default => sub { shift->auto_prereq },
+
+sub mvp_multivalue_args { qw( allow_dirty ) }
+has allow_dirty => (
+    is      => 'lazy',
+    isa     => ArrayRef,
+    default => sub { shift->get_value('allow_dirty') }
 );
 
-has is_task => (
-    is      => 'ro',
-    isa     => Bool,
-    lazy    => 1,
-    builder => '_build_is_task',
-);
 
-method _build_is_task {
-    return $self->dist =~ /^Task-/ ? 1 : 0;
-}
+sub configure {
+    my $self = shift;
 
-has weaver_config_plugin => (
-    is      => 'ro',
-    isa     => Str,
-    default => '@FLORA',  # TODO: needs to change
-);
-
-has disable_pod_coverage_tests => (
-    is      => 'ro',
-    isa     => Bool,
-    default => 0,
-);
-
-has disable_trailing_whitespace_tests => (
-    is      => 'ro',
-    isa     => Bool,
-    default => 0,
-);
-
-has bugtracker_url => (
-    isa     => Uri,
-    coerce  => 1,
-    lazy    => 1,
-    builder => '_build_bugtracker_url',
-    handles => {
-        bugtracker_url => 'as_string',
-    },
-);
-
-method _build_bugtracker_url {
-    return sprintf $self->_rt_uri_pattern, $self->dist;
-}
-
-has bugtracker_email => (
-    is      => 'ro',
-    isa     => EmailAddress,
-    lazy    => 1,
-    builder => '_build_bugtracker_email',
-);
-
-method _build_bugtracker_email {
-    return sprintf 'bug-%s@rt.cpan.org', $self->dist;
-}
-
-has _rt_uri_pattern => (
-    is      => 'ro',
-    isa     => Str,
-    default => 'http://rt.cpan.org/Public/Dist/Display.html?Name=%s',
-);
-
-has homepage_url => (
-    isa     => Uri,
-    coerce  => 1,
-    lazy    => 1,
-    builder => '_build_homepage_url',
-    handles => {
-        homepage_url => 'as_string',
-    },
-);
-
-method _build_homepage_url {
-    return sprintf $self->_cpansearch_pattern, $self->dist;
-}
-
-has _cpansearch_pattern => (
-    is      => 'ro',
-    isa     => Str,
-    default => 'http://search.cpan.org/dist/%s',
-);
-
-has repository => (
-    isa     => Uri,
-    coerce  => 1,
-    lazy    => 1,
-    builder => '_build_repository_url',
-    handles => {
-        repository_url    => 'as_string',
-        repository_scheme => 'scheme',
-    },
-);
-
-has repository_at => (
-    is        => 'ro',
-    isa       => Str,
-    predicate => 'has_repository_at',
-);
-
-has github_user => (
-    is      => 'ro',
-    isa     => Str,
-    default => 'bioperl',
-);
-
-my $map_tc = Map[
-    Str, Dict[
-        pattern     => CodeRef,
-        web_pattern => CodeRef,
-        type        => Optional[Str],
-        mangle      => Optional[CodeRef],
-    ]
-];
-
-coerce $map_tc, from Map[
-    Str, Dict[
-        pattern     => Str|CodeRef,
-        web_pattern => Str|CodeRef,
-        type        => Optional[Str],
-        mangle      => Optional[CodeRef],
-    ]
-], via {
-    my %in = %{ $_ };
-    return { map {
-        my $k = $_;
-        ($k => {
-            %{ $in{$k} },
-            (map {
-                my $v = $_;
-                (ref $in{$k}->{$v} ne 'CODE'
-                     ? ($v => sub { $in{$k}->{$v} })
-                     : ()),
-            } qw(pattern web_pattern)),
-        })
-    } keys %in };
-};
-
-has _repository_host_map => (
-    traits  => [qw(Hash)],
-    isa     => $map_tc,
-    coerce  => 1,
-    lazy    => 1,
-    builder => '_build__repository_host_map',
-    handles => {
-        _repository_data_for => 'get',
-    },
-);
-
-sub lower { lc shift }
-
-method _build__repository_host_map {
-    my $github_pattern = sub { sprintf 'git://github.com/%s/%%s.git', $self->github_user };
-    my $github_web_pattern = sub { sprintf 'http://github.com/%s/%%s', $self->github_user };
-    my $scsys_web_pattern_proto = sub {
-        return sprintf 'http://git.shadowcat.co.uk/gitweb/gitweb.cgi?p=%s/%%s.git;a=summary', $_[0];
-    };
-
-    return {
-        github => {
-            pattern     => $github_pattern,
-            web_pattern => $github_web_pattern,
-            mangle      => \&lower,
-        },
-        GitHub => {
-            pattern     => $github_pattern,
-            web_pattern => $github_web_pattern,
-        },
-        gitmo => {
-            pattern     => 'git://git.moose.perl.org/%s.git',
-            web_pattern => $scsys_web_pattern_proto->('gitmo'),
-        },
-        catsvn => {
-            type        => 'svn',
-            pattern     => 'http://dev.catalyst.perl.org/repos/Catalyst/%s/',
-            web_pattern => 'http://dev.catalystframework.org/svnweb/Catalyst/browse/%s',
-        },
-        (map {
-            ($_ => {
-                pattern     => "git://git.shadowcat.co.uk/${_}/%s.git",
-                web_pattern => $scsys_web_pattern_proto->($_),
-            })
-        } qw(catagits p5sagit dbsrgits)),
-    };
-}
-
-method _build_repository_url {
-    return $self->_resolve_repository_with($self->repository_at, 'pattern')
-        if $self->has_repository_at;
-    confess "Cannot determine repository url without repository_at. "
-          . "Please provide either repository_at or repository."
-}
-
-has repository_web => (
-    isa     => Uri,
-    coerce  => 1,
-    lazy    => 1,
-    builder => '_build_repository_web',
-    handles => {
-        repository_web => 'as_string',
-    },
-);
-
-method _build_repository_web {
-    return $self->_resolve_repository_with($self->repository_at, 'web_pattern')
-        if $self->has_repository_at;
-    confess "Cannot determine repository web url without repository_at. "
-          . "Please provide either repository_at or repository_web."
-}
-
-method _resolve_repository_with ($service, $thing) {
-    my $dist = $self->dist;
-    my $data = $self->_repository_data_for($service);
-    confess "unknown repository service $service" unless $data;
-    return sprintf $data->{$thing}->(),
-        (exists $data->{mangle}
-             ? $data->{mangle}->($dist)
-             : $dist);
-}
-
-has repository_type => (
-    is      => 'ro',
-    isa     => Str,
-    lazy    => 1,
-    builder => '_build_repository_type',
-);
-
-method _build_repository_type {
-    my $data = $self->_repository_data_for($self->repository_at);
-    return $data->{type} if exists $data->{type};
-
-    for my $vcs (qw(git svn)) {
-        return $vcs if $self->repository_scheme eq $vcs;
-    }
-
-    confess "Unable to guess repository type based on the repository url. "
-          . "Please provide repository_type.";
-}
-
-override BUILDARGS => method ($class:) {
-    my $args = super;
-    return { %{ $args->{payload} }, %{ $args } };
-};
-
-method configure {
-    $self->add_bundle('@Basic');
+    $self->add_bundle('@Filter' => {
+        '-bundle' => '@Basic',
+        '-remove' => ['Readme'],
+    });
 
     $self->add_plugins(qw(
         MetaConfig
@@ -341,48 +101,229 @@ method configure {
         PodSyntaxTests
         NoTabsTests
         NextRelease
-        Git::Tag
         Test::Compile
+        PodCoverageTests
+        MojibakeTests
+        AutoPrereqs
     ));
 
-    $self->add_plugins('PodCoverageTests')
-        unless $self->disable_pod_coverage_tests;
-
+    my @allow_dirty;
+    foreach (@{$self->allow_dirty}) {
+        push (@allow_dirty, 'allow_dirty', $_);
+    }
 
     $self->add_plugins(
-        [MetaResources => {
-            'repository.type'   => $self->repository_type,
-            'repository.url'    => $self->repository_url,
-            'repository.web'    => $self->repository_web,
-            'bugtracker.web'    => $self->bugtracker_url,
-            'bugtracker.mailto' => $self->bugtracker_email,
-            'homepage'          => $self->homepage_url,
-        }],
+        [AutoMetaResources => [
+            'repository.github' => $self->repository_github,
+            'homepage'          => $self->homepage,
+        ]],
+        ## AutoMetaResources does not let us configure the bugtracker
+        [MetaResources => [
+            'bugtracker.web'    => $self->bugtracker_web,
+            'bugtracker.mailto' => $self->bugtracker_mailto,
+        ]],
         [Authority => {
             authority   => $self->authority,
             do_metadata => 1,
         }],
         [EOLTests => {
-            trailing_whitespace => !$self->disable_trailing_whitespace_tests,
+            trailing_whitespace => $self->trailing_whitespace,
         }],
+        [PodWeaver => {
+            config_plugin => '@BioPerl',
+        }],
+        ['Git::Check' => [
+            @allow_dirty,
+        ]],
+        ['Git::Commit' => [
+            @allow_dirty,
+        ]],
+        ['Git::Tag' => [
+            tag_format  => '%N-v%v',
+            tag_message => '%N-v%v',
+        ]],
     );
 
-    # TODO: figure out and migrate to a Bioperl-wide PodWeaver config
-    # plugin.  this will require deleting large amounts of POD
-    # boilerplate from the existing codebase. -- rbuels
-    # $self->is_task
-    #     ? $self->add_plugins('TaskWeaver')
-    #     : $self->add_plugins(
-    #           [PodWeaver => {
-    #               config_plugin => $self->weaver_config_plugin,
-    #           }],
-    #       );
-
-    $self->add_plugins('AutoPrereqs') if $self->auto_prereqs;
 }
 
-with 'Dist::Zilla::Role::PluginBundle::Easy';
-
 __PACKAGE__->meta->make_immutable;
-
 1;
+
+__END__
+=pod
+
+=encoding utf-8
+
+=head1 NAME
+
+Dist::Zilla::PluginBundle::BioPerl - Build your distributions like Bioperl does
+
+=head1 VERSION
+
+version 0.20
+
+=head1 SYNOPSIS
+
+  # dist.ini
+  name = Dist-Zilla-Plugin-BioPerl
+  ...
+
+  [@BioPerl]
+
+=head1 DESCRIPTION
+
+This is the L<Dist::Zilla> configuration for the BioPerl project. It is roughly
+equivalent to:
+
+  [@Filter]
+  -bundle = @Basic      ; the basic to maintain and release CPAN distros
+  -remove = Readme      ; avoid conflict since we already have a README file
+
+  [MetaConfig]          ; summarize Dist::Zilla configuration on distribution
+  [MetaJSON]            ; produce a META.json
+  [PkgVersion]          ; add a $version to the modules
+  [PodSyntaxTests]      ; create a release test for Pod syntax
+  [NoTabsTests]         ; create a release tests making sure hard tabs aren't used
+  [Test::Compile]       ; test syntax of all modules
+  [PodCoverageTests]    ; create release test for Pod coverage
+  [MojibakeTests]       ; create release test for correct encoding
+  [AutoPrereqs]         ; automatically find the dependencies
+
+  [AutoMetaResources]   ; automatically fill resources fields on metadata
+  repository.github     = user:bioperl
+  homepage              = http://search.cpan.org/dist/${dist}
+
+  [MetaResources]       ; fill resources fields on metadata
+  bugtracker.web        = https://redmine.open-bio.org/projects/bioperl/
+  bugtracker.mailto     = bioperl-l@bioperl.org
+
+  [Authority]           ; put the $AUTHORITY line in the modules and metadata
+  authority             = cpan:BIOPERLML
+  do_metadata           = 1
+
+  [EOLTests]            ; create release tests for correct line endings
+  trailing_whitespace   = 1
+
+  [PodWeaver]
+  config_plugin = @BioPerl
+
+  [NextRelease]         ; update release number on Changes file
+  [Git::Check]          ; check working path for any uncommitted stuff
+  allow_dirty = Changes
+  allow_dirty = dist.ini
+  [Git::Commit]         ; commit the dzil-generated stuff
+  allow_dirty = Changes
+  allow_dirty = dist.ini
+  [Git::Tag]            ; tag our new release
+  tag_format  = %N-v%v
+  tag_message = %N-v%v
+
+=head1 CONFIGURATION
+
+Use the L<Dist::Zilla::PluginBundle::Filter> to filter any undesired plugin
+that is part of the default set. This also allows to change those plugins
+default values. However, the BioPerl bundle already recognizes some of the
+plugins options and will pass it to the corresponding plugin. If any is missing,
+please consider patching this bundle.
+
+In some cases, this bundle will also perform some sanity checks before passing
+the value to the original plugin.
+
+=over 4
+
+=item *
+
+homepage
+
+Same option used by the L<Dist::Zilla::Plugin::AutoMetaResources>
+
+=item *
+
+repository.github
+
+Same option used by the L<Dist::Zilla::Plugin::AutoMetaResources>
+
+=item *
+
+bugtracker.web
+
+Same option used by the L<Dist::Zilla::Plugin::MetaResources>
+
+=item *
+
+bugtracker.mailto
+
+Same option used by the L<Dist::Zilla::Plugin::MetaResources>
+
+=item *
+
+authority
+
+Same option used by the L<Dist::Zilla::Plugin::Authority>
+
+=item *
+
+trailing_whitespace
+
+Same option used by the L<Dist::Zilla::Plugin::EOLTests>
+
+=item *
+
+allow_dirty
+
+Same option used by the L<Dist::Zilla::Plugin::Git::Commit> and
+L<Dist::Zilla::Plugin::Git::Check>
+
+=back
+
+=for Pod::Coverage get_value
+
+=for Pod::Coverage mvp_multivalue_args
+
+=for Pod::Coverage configure
+
+=head1 FEEDBACK
+
+=head2 Mailing lists
+
+User feedback is an integral part of the evolution of this and other
+Bioperl modules. Send your comments and suggestions preferably to
+the Bioperl mailing list.  Your participation is much appreciated.
+
+  bioperl-l@bioperl.org                  - General discussion
+  http://bioperl.org/wiki/Mailing_lists  - About the mailing lists
+
+=head2 Support
+
+Please direct usage questions or support issues to the mailing list:
+I<bioperl-l@bioperl.org>
+
+rather than to the module maintainer directly. Many experienced and
+reponsive experts will be able look at the problem and quickly
+address it. Please include a thorough description of the problem
+with code and data examples if at all possible.
+
+=head2 Reporting bugs
+
+Report bugs to the Bioperl bug tracking system to help us keep track
+of the bugs and their resolution. Bug reports can be submitted via the
+web:
+
+  https://redmine.open-bio.org/projects/bioperl/
+
+=head1 LEGAL
+
+=head2 Authors
+
+Florian Ragwitz <rafl@debian.org>
+
+Sheena Scroggins
+
+Carnë Draug <carandraug+dev@gmail.com
+
+=head2 Copyright and License
+
+This software is Copyright (c) by 2010 Florian Ragwitz, and 2011 Sheena Scroggins, and 2013 Carnë Draug and released under the license of the same terms as the perl 5 programming language system itself
+
+=cut
+
