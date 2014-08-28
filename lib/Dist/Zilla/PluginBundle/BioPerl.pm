@@ -2,15 +2,14 @@ package Dist::Zilla::PluginBundle::BioPerl;
 BEGIN {
   $Dist::Zilla::PluginBundle::BioPerl::AUTHORITY = 'cpan:BIOPERLML';
 }
-{
-  $Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.20';
-}
+$Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.21';
 use utf8;
 
 # ABSTRACT: Build your distributions like Bioperl does
 # AUTHOR:   Florian Ragwitz <rafl@debian.org>
 # AUTHOR:   Sheena Scroggins
 # AUTHOR:   Carnë Draug <carandraug+dev@gmail.com
+# AUTHOR:   Chris Fields <cjfields1@gmail.com
 # OWNER:    2010 Florian Ragwitz
 # OWNER:    2011 Sheena Scroggins
 # OWNER:    2013 Carnë Draug
@@ -22,16 +21,16 @@ use MooseX::Types::URI qw(Uri);
 use MooseX::Types::Email qw(EmailAddress);
 use MooseX::Types::Moose qw(ArrayRef Bool Str);
 use namespace::autoclean;
-with 'Dist::Zilla::Role::PluginBundle::Easy';
+with qw/Dist::Zilla::Role::PluginBundle::Easy Dist::Zilla::Role::PluginBundle::PluginRemover Dist::Zilla::Role::PluginBundle::Config::Slicer/;
 
 
 
 sub get_value {
     my ($self, $accessor) = @_;
     my %defaults = (
-        'homepage'            => 'http://search.cpan.org/dist/%{dist}',
+        'homepage'            => 'https://metacpan.org/release/%{dist}',
         'repository.github'   => 'user:bioperl',
-        'bugtracker.web'      => 'https://redmine.open-bio.org/projects/bioperl/',
+        'bugtracker.web'      => 'https://github.com/bioperl/%{dist}',
         'bugtracker.mailto'   => 'bioperl-l@bioperl.org',
         'authority'           => 'cpan:BIOPERLML',
         'trailing_whitespace' => 1,
@@ -99,7 +98,7 @@ sub configure {
         MetaJSON
         PkgVersion
         PodSyntaxTests
-        NoTabsTests
+        Test::NoTabs
         NextRelease
         Test::Compile
         PodCoverageTests
@@ -150,6 +149,7 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
+
 =pod
 
 =encoding utf-8
@@ -160,7 +160,7 @@ Dist::Zilla::PluginBundle::BioPerl - Build your distributions like Bioperl does
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 SYNOPSIS
 
@@ -183,7 +183,7 @@ equivalent to:
   [MetaJSON]            ; produce a META.json
   [PkgVersion]          ; add a $version to the modules
   [PodSyntaxTests]      ; create a release test for Pod syntax
-  [NoTabsTests]         ; create a release tests making sure hard tabs aren't used
+  [Test::NoTabs]        ; create a release tests making sure hard tabs aren't used
   [Test::Compile]       ; test syntax of all modules
   [PodCoverageTests]    ; create release test for Pod coverage
   [MojibakeTests]       ; create release test for correct encoding
@@ -191,10 +191,10 @@ equivalent to:
 
   [AutoMetaResources]   ; automatically fill resources fields on metadata
   repository.github     = user:bioperl
-  homepage              = http://search.cpan.org/dist/${dist}
+  homepage              = https://metacpan.org/release/${dist}
 
   [MetaResources]       ; fill resources fields on metadata
-  bugtracker.web        = https://redmine.open-bio.org/projects/bioperl/
+  bugtracker.web        = https://github.com/bioperl/${dist}
   bugtracker.mailto     = bioperl-l@bioperl.org
 
   [Authority]           ; put the $AUTHORITY line in the modules and metadata
@@ -309,21 +309,22 @@ Report bugs to the Bioperl bug tracking system to help us keep track
 of the bugs and their resolution. Bug reports can be submitted via the
 web:
 
-  https://redmine.open-bio.org/projects/bioperl/
+  https://github.com/bioperl/dist-zilla-pluginbundle-bioperl/issues
 
-=head1 LEGAL
-
-=head2 Authors
+=head1 AUTHORS
 
 Florian Ragwitz <rafl@debian.org>
 
 Sheena Scroggins
 
-Carnë Draug <carandraug+dev@gmail.com
+CarnÃ« Draug <carandraug+dev@gmail.com
 
-=head2 Copyright and License
+Chris Fields <cjfields1@gmail.com
 
-This software is Copyright (c) by 2010 Florian Ragwitz, and 2011 Sheena Scroggins, and 2013 Carnë Draug and released under the license of the same terms as the perl 5 programming language system itself
+=head1 COPYRIGHT
+
+This software is copyright (c) 2010 by Florian Ragwitz, 2011 by Sheena Scroggins, and 2013 by CarnÃ« Draug.
+
+This software is available under the same terms as the perl 5 programming language system itself.
 
 =cut
-

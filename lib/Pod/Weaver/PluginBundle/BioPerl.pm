@@ -2,9 +2,7 @@ package Pod::Weaver::PluginBundle::BioPerl;
 BEGIN {
   $Pod::Weaver::PluginBundle::BioPerl::AUTHORITY = 'cpan:BIOPERLML';
 }
-{
-  $Pod::Weaver::PluginBundle::BioPerl::VERSION = '0.20';
-}
+$Pod::Weaver::PluginBundle::BioPerl::VERSION = '0.21';
 use utf8;
 
 # ABSTRACT: Configure your POD like Bioperl does
@@ -91,6 +89,7 @@ sub fback_reporting {
 1;
 
 __END__
+
 =pod
 
 =encoding utf-8
@@ -101,7 +100,7 @@ Pod::Weaver::PluginBundle::BioPerl - Configure your POD like Bioperl does
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 SYNOPSIS
 
@@ -197,17 +196,16 @@ Report bugs to the Bioperl bug tracking system to help us keep track
 of the bugs and their resolution. Bug reports can be submitted via the
 web:
 
-  https://redmine.open-bio.org/projects/bioperl/
+  https://github.com/bioperl/dist-zilla-pluginbundle-bioperl/issues
 
-=head1 LEGAL
+=head1 AUTHOR
 
-=head2 Authors
+CarnÃ« Draug <carandraug+dev@gmail.com
 
-Carnë Draug <carandraug+dev@gmail.com
+=head1 COPYRIGHT
 
-=head2 Copyright and License
+This software is copyright (c) 2013 by CarnÃ« Draug.
 
-This software is Copyright (c) by 2013 Carnë Draug and released under the license of the same terms as the perl 5 programming language system itself
+This software is available under the same terms as the perl 5 programming language system itself.
 
 =cut
-
