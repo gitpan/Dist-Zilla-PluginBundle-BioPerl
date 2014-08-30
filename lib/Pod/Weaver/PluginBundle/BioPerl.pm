@@ -2,7 +2,7 @@ package Pod::Weaver::PluginBundle::BioPerl;
 BEGIN {
   $Pod::Weaver::PluginBundle::BioPerl::AUTHORITY = 'cpan:BIOPERLML';
 }
-$Pod::Weaver::PluginBundle::BioPerl::VERSION = '0.21';
+$Pod::Weaver::PluginBundle::BioPerl::VERSION = '0.22';
 use utf8;
 
 # ABSTRACT: Configure your POD like Bioperl does
@@ -100,7 +100,7 @@ Pod::Weaver::PluginBundle::BioPerl - Configure your POD like Bioperl does
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 

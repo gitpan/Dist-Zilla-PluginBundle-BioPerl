@@ -2,7 +2,7 @@ package Dist::Zilla::PluginBundle::BioPerl;
 BEGIN {
   $Dist::Zilla::PluginBundle::BioPerl::AUTHORITY = 'cpan:BIOPERLML';
 }
-$Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.21';
+$Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.22';
 use utf8;
 
 # ABSTRACT: Build your distributions like Bioperl does
@@ -160,7 +160,7 @@ Dist::Zilla::PluginBundle::BioPerl - Build your distributions like Bioperl does
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 

@@ -107,7 +107,7 @@
          "web" : "https://github.com/bioperl/dist-zilla-pluginbundle-bioperl"
       }
    },
-   "version" : "0.21",
+   "version" : "0.22",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"
@@ -463,7 +463,7 @@
                "Dist::Zilla::Plugin::Git::Tag" : {
                   "branch" : null,
                   "signed" : 0,
-                  "tag" : "Dist-Zilla-PluginBundle-BioPerl-v0.21",
+                  "tag" : "Dist-Zilla-PluginBundle-BioPerl-v0.22",
                   "tag_format" : "%N-v%v",
                   "tag_message" : "%N-v%v",
                   "time_zone" : "local"
