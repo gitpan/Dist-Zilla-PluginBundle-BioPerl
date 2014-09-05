@@ -49,6 +49,7 @@ my %WriteMakefileArgs = (
     "Dist::Zilla::Plugin::Prereqs" => 0,
     "Dist::Zilla::Plugin::Prereqs::Plugins" => 0,
     "Dist::Zilla::Plugin::PruneCruft" => 0,
+    "Dist::Zilla::Plugin::RunExtraTests" => 0,
     "Dist::Zilla::Plugin::ShareDir" => 0,
     "Dist::Zilla::Plugin::Test::Compile" => 0,
     "Dist::Zilla::Plugin::Test::NoTabs" => 0,
@@ -79,7 +80,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.22",
+  "VERSION" => "0.23",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -116,6 +117,7 @@ my %FallbackPrereqs = (
   "Dist::Zilla::Plugin::Prereqs" => 0,
   "Dist::Zilla::Plugin::Prereqs::Plugins" => 0,
   "Dist::Zilla::Plugin::PruneCruft" => 0,
+  "Dist::Zilla::Plugin::RunExtraTests" => 0,
   "Dist::Zilla::Plugin::ShareDir" => 0,
   "Dist::Zilla::Plugin::Test::Compile" => 0,
   "Dist::Zilla::Plugin::Test::NoTabs" => 0,

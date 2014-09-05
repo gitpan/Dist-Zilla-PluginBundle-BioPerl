@@ -2,7 +2,7 @@ package Dist::Zilla::PluginBundle::BioPerl;
 BEGIN {
   $Dist::Zilla::PluginBundle::BioPerl::AUTHORITY = 'cpan:BIOPERLML';
 }
-$Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.22';
+$Dist::Zilla::PluginBundle::BioPerl::VERSION = '0.23';
 use utf8;
 
 # ABSTRACT: Build your distributions like Bioperl does
@@ -104,6 +104,7 @@ sub configure {
         PodCoverageTests
         MojibakeTests
         AutoPrereqs
+        RunExtraTests
     ));
 
     my @allow_dirty;
@@ -160,7 +161,7 @@ Dist::Zilla::PluginBundle::BioPerl - Build your distributions like Bioperl does
 
 =head1 VERSION
 
-version 0.22
+version 0.23
 
 =head1 SYNOPSIS
 
@@ -188,6 +189,7 @@ equivalent to:
   [PodCoverageTests]    ; create release test for Pod coverage
   [MojibakeTests]       ; create release test for correct encoding
   [AutoPrereqs]         ; automatically find the dependencies
+  [RunExtraTests]       ; run tests /xt directory, normally only needed for release
 
   [AutoMetaResources]   ; automatically fill resources fields on metadata
   repository.github     = user:bioperl
@@ -217,6 +219,14 @@ equivalent to:
   [Git::Tag]            ; tag our new release
   tag_format  = %N-v%v
   tag_message = %N-v%v
+
+In addition, this also has two roles, L<Dist::Zilla::PluginBundle::PluginRemover> and
+Dist::Zilla::PluginBundle::Config::Slice, so one could do something like this for
+problematic distributions:
+
+  [@BioPerl]
+  -remove = MojibakeTests
+  -remove = PodSyntaxTests
 
 =head1 CONFIGURATION
 

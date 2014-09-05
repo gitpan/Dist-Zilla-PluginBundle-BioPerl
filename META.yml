@@ -47,6 +47,7 @@ requires:
   Dist::Zilla::Plugin::Prereqs: '0'
   Dist::Zilla::Plugin::Prereqs::Plugins: '0'
   Dist::Zilla::Plugin::PruneCruft: '0'
+  Dist::Zilla::Plugin::RunExtraTests: '0'
   Dist::Zilla::Plugin::ShareDir: '0'
   Dist::Zilla::Plugin::Test::Compile: '0'
   Dist::Zilla::Plugin::Test::NoTabs: '0'
@@ -74,7 +75,7 @@ resources:
   bugtracker: https://github.com/bioperl/dist-zilla-pluginbundle-bioperl/issues
   homepage: https://metacpan.org/release/Dist-Zilla-PluginBundle-BioPerl
   repository: git://github.com/bioperl/dist-zilla-pluginbundle-bioperl.git
-version: '0.22'
+version: '0.23'
 x_Dist_Zilla:
   perl:
     version: '5.018001'
@@ -194,6 +195,13 @@ x_Dist_Zilla:
       class: Dist::Zilla::Plugin::AutoPrereqs
       name: '@BioPerl/AutoPrereqs'
       version: '5.019'
+    -
+      class: Dist::Zilla::Plugin::RunExtraTests
+      config:
+        Dist::Zilla::Role::TestRunner:
+          default_jobs: 1
+      name: '@BioPerl/RunExtraTests'
+      version: '0.022'
     -
       class: Dist::Zilla::Plugin::AutoMetaResources
       name: '@BioPerl/AutoMetaResources'
@@ -352,7 +360,7 @@ x_Dist_Zilla:
         Dist::Zilla::Plugin::Git::Tag:
           branch: ~
           signed: 0
-          tag: Dist-Zilla-PluginBundle-BioPerl-v0.22
+          tag: Dist-Zilla-PluginBundle-BioPerl-v0.23
           tag_format: '%N-v%v'
           tag_message: '%N-v%v'
           time_zone: local
